@@ -96,7 +96,8 @@ class MDImputer():
 
     # todo
     #
-    # MLP
+    # measure FI on the fly
+    # receive normal data and missing data
 
 # test code
 X_train = [[1,1,1],[1,2,2],[3,3,3],[5,5,5]]
