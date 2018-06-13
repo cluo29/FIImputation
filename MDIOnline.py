@@ -18,20 +18,68 @@ class MDImputer():
     """
     basic MDI for online classification.
     """
-    # first, mode, mean, median, hot deck impute.
+    # train the imputer
     def __init__(self, X_train, column_id):
-        a = np.array(X_train)
+        a = np.array(X_train, dtype='f')
         self.column_id = column_id
         self.mean = np.mean(a[:,column_id])
+        self.median = np.median(a[:,column_id])
 
+        mode, count = stats.mode(a[:, column_id])
+        self.mode = mode
+        self.last = a[-1, column_id]
+
+        X_MDI_train = np.delete(a, column_id, 1)
+        Y_MDI_train = a[:, column_id]
+
+        # LR model
+        self.regr = linear_model.LinearRegression()
+        self.regr.fit(X_MDI_train, Y_MDI_train)
+
+    # first, mode, mean, median, hot deck impute.
     # every time needs MDI, we accept only one row
+    # output imputation
     def mean_impute(self, inputRow):
-        outputRow = np.array(inputRow)
+        outputRow = np.array(inputRow, dtype='f')
         outputRow[self.column_id] = self.mean
         return outputRow
 
+    def median_impute(self, inputRow):
+        outputRow = np.array(inputRow, dtype='f')
+        outputRow[self.column_id] = self.median
+        return outputRow
 
+    def mode_impute(self, inputRow):
+        outputRow = np.array(inputRow, dtype='f')
+        outputRow[self.column_id] = self.mode
+        return outputRow
+
+    # get a complete row for hot_deck_impute (last observation)
+    # if not having this, will use last row of train set
+    def hot_deck_read(self, inputRow):
+        self.last = inputRow[self.column_id]
+
+    def hot_deck_impute(self, inputRow):
+        outputRow = np.array(inputRow, dtype='f')
+        outputRow[self.column_id] = self.last
+        return outputRow
+
+    def lr_impute(self, inputRow):
+        inputRowNP = np.array([inputRow], dtype='f')
+        Row_X = np.delete(inputRowNP, self.column_id, 1)
+        Row_Y = self.regr.predict(Row_X)
+        inputRowNP[0,self.column_id] = Row_Y
+        return inputRowNP
+
+    # todo
+    #
+    # knn
+    # MLP
 
 # test code
-X_train = [[1,2,3],[3,2,1],[0,1,1]]
+X_train = [[1,1,1],[1,2,2],[3,3,3]]
 cjj = MDImputer(X_train,0)
+
+row = [0,4,4]
+b=cjj.mean_impute(row)
+print(b)
