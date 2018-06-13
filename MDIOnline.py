@@ -33,8 +33,16 @@ class MDImputer():
         Y_MDI_train = a[:, column_id]
 
         # LR model
-        self.regr = linear_model.LinearRegression()
-        self.regr.fit(X_MDI_train, Y_MDI_train)
+        self.LRregr = linear_model.LinearRegression()
+        self.LRregr.fit(X_MDI_train, Y_MDI_train)
+
+        # KNN regressor
+        self.KNregr = neighbors.KNeighborsRegressor( n_neighbors=10)
+        self.KNregr.fit(X_MDI_train, Y_MDI_train)
+
+        # MLP
+        self.MLPregr = neural_network.MLPRegressor()
+        self.MLPregr.fit(X_MDI_train, Y_MDI_train)
 
     # first, mode, mean, median, hot deck impute.
     # every time needs MDI, we accept only one row
@@ -67,19 +75,39 @@ class MDImputer():
     def lr_impute(self, inputRow):
         inputRowNP = np.array([inputRow], dtype='f')
         Row_X = np.delete(inputRowNP, self.column_id, 1)
-        Row_Y = self.regr.predict(Row_X)
+        Row_Y = self.LRregr.predict(Row_X)
         inputRowNP[0,self.column_id] = Row_Y
+        return inputRowNP
+
+    def knn_impute(self, inputRow):
+        inputRowNP = np.array([inputRow], dtype='f')
+        Row_X = np.delete(inputRowNP, self.column_id, 1)
+        Row_Y = self.KNregr.predict(Row_X)
+        inputRowNP[0, self.column_id] = Row_Y
+        return inputRowNP
+
+    def MLP_impute(self, inputRow):
+        # ain gonna normalize
+        inputRowNP = np.array([inputRow], dtype='f')
+        Row_X = np.delete(inputRowNP, self.column_id, 1)
+        Row_Y = self.MLPregr.predict(Row_X)
+        inputRowNP[0, self.column_id] = Row_Y
         return inputRowNP
 
     # todo
     #
-    # knn
     # MLP
 
 # test code
-X_train = [[1,1,1],[1,2,2],[3,3,3]]
+X_train = [[1,1,1],[1,2,2],[3,3,3],[5,5,5]]
+
+for i in range(6):
+    X_train.append([5,5,5])
+
 cjj = MDImputer(X_train,0)
 
 row = [0,4,4]
-b=cjj.mean_impute(row)
+#
+# cjj.hot_deck_read([9,9,9])
+b=cjj.hot_deck_impute(row)
 print(b)
