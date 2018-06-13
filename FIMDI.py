@@ -5,13 +5,37 @@
 
 from numpy import genfromtxt
 import numpy as np
+import feature_impact
+
+# our feature impact impute, actually it is an impute evaluator
+def FI_impute():
+    print('TODO')
 
 def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     # X_test_m  has missing data already
     # column_id is the feature missing data
     # label is how missing data is marked
     # X_test_c is complete X test set
-    print()
+
+    # 1. train a FI_detector using train set
+    # get how many classes are in Y
+    AllY = np.concatenate((Y_train, Y_test), axis=0)
+    setAllY = set(AllY)
+    num_class = len(setAllY)
+
+    detector = feature_impact.Detector_C(num_class)
+
+    detector.train(X_train, Y_train, 0)
+
+    FI_output = detector.get_FI()
+
+    print("FI_list =")
+    print(FI_output)
+
+    # 2. train all the imputation models
+
+
+
 
 def make_random_missing(column_id, label, X_test_c, rate_of_missing=0.1):
     # to make a test set miss some data in a feature
@@ -55,7 +79,7 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
 
     Y_train = train_set[:,-1]
 
-    Y_train = Y_train.reshape(Y_train.shape[0], -1)
+    #Y_train = Y_train.reshape(Y_train.shape[0], -1)
 
     test_set = genfromtxt(test_file, delimiter=',')
 
@@ -63,7 +87,7 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
 
     Y_test = test_set[:,-1]
 
-    Y_test = Y_test.reshape(Y_test.shape[0], -1)
+    #Y_test = Y_test.reshape(Y_test.shape[0], -1)
 
     print(X_test_c)
     #print(Y_test)
@@ -72,6 +96,8 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
     X_test_m = make_random_missing(column_id, label, X_test_c, 0.5)
 
     print(X_test_m)
+
+    run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c)
 
 
 
