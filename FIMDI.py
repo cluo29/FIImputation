@@ -6,24 +6,29 @@
 from numpy import genfromtxt
 import numpy as np
 import feature_impact
+import MDIOnline
 
 # our feature impact impute, actually it is an impute evaluator
 
 class FIMDImputer():
 
     # initialization at training time
-    def __init__(self, X_train, Y_train, Y_test, column_id, label, X_test_c):
+    def __init__(self, X_train, Y_train, column_id, label):
         # 1. train a FI_detector using train set
         # get how many classes are in Y
-        AllY = np.concatenate((Y_train, Y_test), axis=0)
-        setAllY = set(AllY)
+        setAllY = set(Y_train)
         num_class = len(setAllY)
 
         self.detector = feature_impact.Detector_C(num_class)
 
         self.detector.train(X_train, Y_train, 0)
-        
 
+        # 2. train all the imputation models
+        
+        self.mdi = MDIOnline.MDImputer(X_train, column_id)
+
+
+    
 def FI_impute():
     print('TODO')
 
@@ -32,10 +37,15 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     # column_id is the feature missing data
     # label is how missing data is marked
     # X_test_c is complete X test set
-    FIMDI1 = FIMDImputer(X_train, Y_train, Y_test, column_id, label, X_test_c)
     
+    # 1 train my imputer with train set
+    FIMDI1 = FIMDImputer(X_train, Y_train, column_id, label)
+    
+    # 2 feed test set row by row
+    # TODO
 
-    # 2. train all the imputation models
+
+    
 
 
 
