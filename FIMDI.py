@@ -8,6 +8,22 @@ import numpy as np
 import feature_impact
 
 # our feature impact impute, actually it is an impute evaluator
+
+class FIMDImputer():
+
+    # initialization at training time
+    def __init__(self, X_train, Y_train, Y_test, column_id, label, X_test_c):
+        # 1. train a FI_detector using train set
+        # get how many classes are in Y
+        AllY = np.concatenate((Y_train, Y_test), axis=0)
+        setAllY = set(AllY)
+        num_class = len(setAllY)
+
+        self.detector = feature_impact.Detector_C(num_class)
+
+        self.detector.train(X_train, Y_train, 0)
+        
+
 def FI_impute():
     print('TODO')
 
@@ -16,21 +32,8 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     # column_id is the feature missing data
     # label is how missing data is marked
     # X_test_c is complete X test set
-
-    # 1. train a FI_detector using train set
-    # get how many classes are in Y
-    AllY = np.concatenate((Y_train, Y_test), axis=0)
-    setAllY = set(AllY)
-    num_class = len(setAllY)
-
-    detector = feature_impact.Detector_C(num_class)
-
-    detector.train(X_train, Y_train, 0)
-
-    FI_output = detector.get_FI()
-
-    print("FI_list =")
-    print(FI_output)
+    FIMDI1 = FIMDImputer(X_train, Y_train, Y_test, column_id, label, X_test_c)
+    
 
     # 2. train all the imputation models
 
