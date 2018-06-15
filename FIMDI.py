@@ -10,6 +10,7 @@ import MDIOnline
 
 # our feature impact impute, actually it is an impute evaluator
 
+
 class FIMDImputer():
 
     # initialization at training time
@@ -24,11 +25,11 @@ class FIMDImputer():
         self.detector.train(X_train, Y_train, 0)
 
         # 2. train all the imputation models
-        
+
         self.mdi = MDIOnline.MDImputer(X_train, column_id)
 
 
-    
+
 def FI_impute():
     print('TODO')
 
@@ -37,15 +38,58 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     # column_id is the feature missing data
     # label is how missing data is marked
     # X_test_c is complete X test set
-    
+
     # 1 train my imputer with train set
     FIMDI1 = FIMDImputer(X_train, Y_train, column_id, label)
-    
+
+    FI = FIMDI1.detector.get_FI()
+
+    print(FI)
+
+    print(FI[column_id])
+
     # 2 feed test set row by row
     # TODO
+    #print(X_test_m)
+
+    test_rows = X_test_m.shape[0]
+
+    # get row by row
+    for i in range(test_rows):
+
+        # one row is got, do basic MDI
+        current_row = X_test_m[i, :]
+
+        print(current_row)
+
+        # check if this row misses data
+        if current_row[column_id]==label:
+            # missing data
+            # do imputation
+            # get FI
+            a=123
+        else:
+            # complete row
+            # update FI and last observation(basic imputation)
+            # get label
+            ground_truth = Y_test[i]
+            #print(ground_truth)
+
+            # update FI, measure it, then use set_FI
+            measure_X = np.array([current_row])
+
+            measure_Y = np.array([[ground_truth]])
+
+            FI1 = FIMDI1.detector.measure_FI(measure_X, measure_Y, 0)
+            print('FI1 = ', FI1)
+
+            #FI1 is a dictionary, turn it to list then use set_FI
+
+            # last observation reading
+            FIMDI1.mdi.hot_deck_read(current_row)
 
 
-    
+
 
 
 
@@ -90,7 +134,7 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
 
     X_train = np.delete(train_set, train_col-1, 1)
 
-    Y_train = train_set[:,-1]
+    Y_train = train_set[:, -1]
 
     #Y_train = Y_train.reshape(Y_train.shape[0], -1)
 
@@ -98,17 +142,17 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
 
     X_test_c = np.delete(test_set, train_col-1, 1)
 
-    Y_test = test_set[:,-1]
+    Y_test = test_set[:, -1]
 
     #Y_test = Y_test.reshape(Y_test.shape[0], -1)
 
-    print(X_test_c)
+    #print(X_test_c)
     #print(Y_test)
 
     # now make missing data
     X_test_m = make_random_missing(column_id, label, X_test_c, 0.5)
 
-    print(X_test_m)
+    #print(X_test_m)
 
     run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c)
 
