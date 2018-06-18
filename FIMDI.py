@@ -63,7 +63,7 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
         print(current_row)
 
         # check if this row misses data
-        if current_row[column_id]==label:
+        if current_row[column_id] == label:
             # missing data
             # do imputation
             # get FI
@@ -71,6 +71,7 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
         else:
             # complete row
             # update FI and last observation(basic imputation)
+
             # get label
             ground_truth = Y_test[i]
             #print(ground_truth)
