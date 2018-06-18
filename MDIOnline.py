@@ -10,6 +10,7 @@ from sklearn import *
 from sklearn import preprocessing
 from sklearn.metrics import *
 
+
 ###
 # CLASS DEFINITION
 ###
@@ -43,6 +44,17 @@ class MDImputer():
         # MLP
         self.MLPregr = neural_network.MLPRegressor()
         self.MLPregr.fit(X_MDI_train, Y_MDI_train)
+
+
+
+    def all_impute(self, inputRow):
+        # do all MDI using functions
+
+        # the list of all impute
+        # todo
+        outputList = []
+        outputList.append()
+
 
     # first, mode, mean, median, hot deck impute.
     # every time needs MDI, we accept only one row
@@ -94,12 +106,10 @@ class MDImputer():
         inputRowNP[0, self.column_id] = Row_Y
         return inputRowNP
 
-    # todo
-    #
-    # measure FI on the fly
-    # receive normal data and missing data
+
 
 # test code
+"""
 X_train = [[1,1,1],[1,2,2],[3,3,3],[5,5,5]]
 
 for i in range(6):
@@ -112,3 +122,4 @@ row = [0,4,4]
 # cjj.hot_deck_read([9,9,9])
 b=cjj.hot_deck_impute(row)
 print(b)
+"""
