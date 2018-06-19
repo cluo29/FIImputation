@@ -51,64 +51,63 @@ class MDImputer():
         # do all MDI using functions
 
         # the list of all impute
-        # todo
         outputList = []
-        outputList.append()
+        outputList.append(self.mean_impute())
+        outputList.append(self.median_impute())
+        outputList.append(self.mode_impute())
+        outputList.append(self.hot_deck_impute())
+        outputList.append(self.lr_impute(inputRow))
+        outputList.append(self.knn_impute(inputRow))
+        outputList.append(self.MLP_impute(inputRow))
 
+        return outputList
 
     # first, mode, mean, median, hot deck impute.
     # every time needs MDI, we accept only one row
     # output imputation
-    def mean_impute(self, inputRow):
-        outputRow = np.array(inputRow, dtype='f')
-        outputRow[self.column_id] = self.mean
-        return outputRow
+    def mean_impute(self):
+        return self.mean
 
-    def median_impute(self, inputRow):
-        outputRow = np.array(inputRow, dtype='f')
-        outputRow[self.column_id] = self.median
-        return outputRow
+    def median_impute(self):
+        return self.median
 
-    def mode_impute(self, inputRow):
-        outputRow = np.array(inputRow, dtype='f')
-        outputRow[self.column_id] = self.mode
-        return outputRow
+    def mode_impute(self):
+        return self.mode[0]
 
     # get a complete row for hot_deck_impute (last observation)
     # if not having this, will use last row of train set
     def hot_deck_read(self, inputRow):
         self.last = inputRow[self.column_id]
 
-    def hot_deck_impute(self, inputRow):
-        outputRow = np.array(inputRow, dtype='f')
-        outputRow[self.column_id] = self.last
-        return outputRow
+    def hot_deck_impute(self):
+        return self.last
 
     def lr_impute(self, inputRow):
         inputRowNP = np.array([inputRow], dtype='f')
         Row_X = np.delete(inputRowNP, self.column_id, 1)
         Row_Y = self.LRregr.predict(Row_X)
-        inputRowNP[0,self.column_id] = Row_Y
-        return inputRowNP
+        return Row_Y[0]
 
     def knn_impute(self, inputRow):
         inputRowNP = np.array([inputRow], dtype='f')
         Row_X = np.delete(inputRowNP, self.column_id, 1)
         Row_Y = self.KNregr.predict(Row_X)
-        inputRowNP[0, self.column_id] = Row_Y
-        return inputRowNP
+        return Row_Y[0]
 
     def MLP_impute(self, inputRow):
         # ain gonna normalize
         inputRowNP = np.array([inputRow], dtype='f')
         Row_X = np.delete(inputRowNP, self.column_id, 1)
         Row_Y = self.MLPregr.predict(Row_X)
-        inputRowNP[0, self.column_id] = Row_Y
-        return inputRowNP
+        return Row_Y[0]
 
 
 
 # test code
+
+
+
+
 """
 X_train = [[1,1,1],[1,2,2],[3,3,3],[5,5,5]]
 
@@ -120,6 +119,6 @@ cjj = MDImputer(X_train,0)
 row = [0,4,4]
 #
 # cjj.hot_deck_read([9,9,9])
-b=cjj.hot_deck_impute(row)
+b=cjj.all_impute(row)
 print(b)
 """
