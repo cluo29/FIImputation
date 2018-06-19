@@ -7,6 +7,9 @@ from numpy import genfromtxt
 import numpy as np
 import feature_impact
 import MDIOnline
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+
 
 # our feature impact impute, actually it is an impute evaluator
 
@@ -28,6 +31,10 @@ class FIMDImputer():
 
         self.mdi = MDIOnline.MDImputer(X_train, column_id)
 
+        # 3. train the targeted classifiers
+        # SVC(gamma=2, C=1)
+        # http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC
+        # http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html#sklearn.ensemble.RandomForestClassifier
 
 
 def FI_impute():
@@ -49,8 +56,6 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     print(FI[column_id])
 
     # 2 feed test set row by row
-    # TODO
-    #print(X_test_m)
 
     test_rows = X_test_m.shape[0]
 
@@ -66,6 +71,10 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
         if current_row[column_id] == label:
             # missing data
             # do imputation
+            mdi_list = FIMDI1.mdi.all_impute(current_row)
+
+            # do a prediction
+
             # get FI
             a=123
         else:
