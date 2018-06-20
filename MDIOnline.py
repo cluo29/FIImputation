@@ -4,6 +4,8 @@
 # the models are trained using train set only (train set has no data missing)
 
 # Chu Luo
+# 2018 June 20
+
 import numpy as np
 from scipy import stats
 from sklearn import *
