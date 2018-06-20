@@ -9,7 +9,7 @@ import feature_impact
 import MDIOnline
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 # our feature impact impute, actually it is an impute evaluator
 
@@ -45,6 +45,20 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
     # column_id is the feature missing data
     # label is how missing data is marked
     # X_test_c is complete X test set
+
+    # 0 prepare metrics
+
+    impute_result_list = []
+
+    mean_impute =[]
+    median_impute = []
+    mode_impute = []
+    hot_deck_impute = []
+    lr_impute = []
+    knn_impute = []
+    MLP_impute = []
+
+    GT_list = []
 
     # 1 train my imputer with train set
     FIMDI1 = FIMDImputer(X_train, Y_train, column_id, label)
@@ -106,14 +120,19 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
 
             FI_impute_result = mdi_list[min_FI_diff_index]
 
-            print('all mdi = ', mdi_list)
-
-            print('FI_impute_result = ', FI_impute_result)
+            impute_result_list.append(FI_impute_result)
 
             FI_impute_GT = X_test_c[i, column_id]
 
-            print('ground truth = ', FI_impute_GT)
+            GT_list.append(FI_impute_GT)
 
+            mean_impute.append(mdi_list[0])
+            median_impute.append(mdi_list[1])
+            mode_impute.append(mdi_list[2])
+            hot_deck_impute.append(mdi_list[3])
+            lr_impute.append(mdi_list[4])
+            knn_impute.append(mdi_list[5])
+            MLP_impute.append(mdi_list[6])
 
         else:
             # complete row
@@ -138,10 +157,39 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
             # last observation reading
             FIMDI1.mdi.hot_deck_read(current_row)
 
+    # 3 evaluation using MAE and RMSE
 
+    print('FI MSE = ', mean_squared_error(GT_list, impute_result_list))
 
+    print('FI MAE = ', mean_absolute_error(GT_list, impute_result_list))
 
+    print('mean MSE = ', mean_squared_error(GT_list, mean_impute))
 
+    print('mean MAE = ', mean_absolute_error(GT_list, mean_impute))
+
+    print('median MSE = ', mean_squared_error(GT_list, median_impute))
+
+    print('median MAE = ', mean_absolute_error(GT_list, median_impute))
+
+    print('mode MSE = ', mean_squared_error(GT_list, mode_impute))
+
+    print('mode MAE = ', mean_absolute_error(GT_list, mode_impute))
+
+    print('hot MSE = ', mean_squared_error(GT_list, hot_deck_impute))
+
+    print('hot MAE = ', mean_absolute_error(GT_list, hot_deck_impute))
+
+    print('lr MSE = ', mean_squared_error(GT_list, lr_impute))
+
+    print('lr MAE = ', mean_absolute_error(GT_list, lr_impute))
+
+    print('knn MSE = ', mean_squared_error(GT_list, knn_impute))
+
+    print('knn MAE = ', mean_absolute_error(GT_list, knn_impute))
+
+    print('mlp MSE = ', mean_squared_error(GT_list, MLP_impute))
+
+    print('mlp MAE = ', mean_absolute_error(GT_list, MLP_impute))
 
 
 def make_random_missing(column_id, label, X_test_c, rate_of_missing=0.1):
