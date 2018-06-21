@@ -261,12 +261,25 @@ def split_data(data_file):
     all_set = genfromtxt(data_file, delimiter=',')
 
     all_set = all_set[:, 1:]
-    
+
     # col 16 is label
 
-    print(all_set[0, 16])
+    label_col = all_set[:, 16]
 
-    print()
+    # remove the label col
+
+    set_temp = np.delete(all_set, 16, 1)
+
+    #print(set_temp)
+
+    # put label in last col
+
+    # combine
+    label_col = np.array([label_col])
+
+    all = np.concatenate((set_temp, label_col.T), axis=1)
+
+    print(all[0])
 
 
 
