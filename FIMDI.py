@@ -255,7 +255,23 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
     run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c)
 
 
+def split_data(data_file):
+    # split a data file into train and test set
+    # let 80% be train
+    all_set = genfromtxt(data_file, delimiter=',')
+
+    all_set = all_set[:, 1:]
+    
+    # col 16 is label
+
+    print(all_set[0, 16])
+
+    print()
+
+
 
 # test code
 
-read_and_run('A.csv','B.csv', 0)
+split_data('parkinsons.data')
+
+#read_and_run('A.csv','B.csv', 0)
