@@ -256,11 +256,26 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
 
 
 def split_data(data_file):
+    # from indoor outdoor
     # split a data file into train and test set
     # let 80% be train
     all_set = genfromtxt(data_file, delimiter=',')
 
-    all_set = all_set[:, 1:]
+
+
+    print(all_set.shape[1])
+
+    print(all_set[0])
+
+    print(all_set[0,15])
+
+# test code
+
+split_data('user1Dataset.csv')
+
+#read_and_run
+
+"""
 
     # col 16 is label
 
@@ -279,12 +294,5 @@ def split_data(data_file):
 
     all = np.concatenate((set_temp, label_col.T), axis=1)
 
-    print(all[0])
 
-
-
-# test code
-
-split_data('parkinsons.data')
-
-#read_and_run('A.csv','B.csv', 0)
+"""
