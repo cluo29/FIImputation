@@ -10,6 +10,7 @@ import MDIOnline
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+import math
 
 # our feature impact impute, actually it is an impute evaluator
 
@@ -248,7 +249,7 @@ def read_and_run(train_file, test_file, column_id, label=-1, seed=0):
     #print(Y_test)
 
     # now make missing data
-    X_test_m = make_random_missing(column_id, label, X_test_c, 0.5)
+    X_test_m = make_random_missing(column_id, label, X_test_c, 0.2)
 
     #print(X_test_m)
 
@@ -261,19 +262,42 @@ def split_data(data_file):
     # let 80% be train
     all_set = genfromtxt(data_file, delimiter=',')
 
+    num_row = int(all_set.shape[0])
 
+    num_train = int(math.floor(num_row*0.8))
 
-    print(all_set.shape[1])
+    print(num_row)
+
+    print(num_train)
 
     print(all_set[0])
 
-    print(all_set[0,15])
+    all_set = np.delete(all_set, 0, 1)
+
+    all_set = np.delete(all_set, 12, 1)
+
+    print(all_set[0])
+
+    train_set = np.array(all_set[0:num_train, :])
+
+    test_set = np.array(all_set[num_train:, :])
+
+    print(train_set.shape[0])
+
+    print(test_set.shape[0])
+
+    np.savetxt('train_set1.out', train_set, delimiter=',')
+
+    np.savetxt('test_set1.out', test_set, delimiter=',')
 
 # test code
 
-split_data('user1Dataset.csv')
+#split_data('user1Dataset.csv')
 
 #read_and_run
+
+read_and_run('train_set1.out', 'test_set1.out', 9)
+
 
 """
 
