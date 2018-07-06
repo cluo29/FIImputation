@@ -111,13 +111,17 @@ def run_FIMDI(X_train, X_test_m, Y_train, Y_test, column_id, label, X_test_c):
                 # get FI of impute
                 FI_list = FIMDI1.detector.measure_FI(impute_row, impute_pred)
 
-                #print('FI = ', FI_list[column_id])
+                print('FI = ', FI_list[column_id])
 
                 FI_diff.append(abs(last_FI_column_id - FI_list[column_id]))
 
             FI_diff_np = np.array(FI_diff)
 
+            #print('FI_diff_np', FI_diff_np)
+
             min_FI_diff_index = np.argmin(FI_diff_np)
+
+            #print('min_FI_diff_index', min_FI_diff_index)
 
             FI_impute_result = mdi_list[min_FI_diff_index]
 
@@ -289,6 +293,20 @@ def split_data(data_file):
     np.savetxt('train_set1.out', train_set, delimiter=',')
 
     np.savetxt('test_set1.out', test_set, delimiter=',')
+
+
+def generate_synt ():
+
+    # input feature numbers
+
+    num_feature = 16
+
+    num_train_set = 1000
+
+    num_test_set = 200
+
+    # generate train set
+
 
 # test code
 
